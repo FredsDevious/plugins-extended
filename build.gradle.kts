@@ -13,20 +13,22 @@ plugins {
     kotlin("jvm") version "1.6.21"
 }
 
-project.extra["GithubUrl"] = "https://github.com/melxin/devious-plugins-extended"
-project.extra["GithubUserName"] = "melxin"
-project.extra["GithubRepoName"] = "devious-plugins-extended"
+project.extra["GithubUrl"] = "https://github.com/FredsDevious/plugins-extended"
+project.extra["GithubUserName"] = "FredsDevious"
+project.extra["GithubRepoName"] = "plugins-extended"
 
 apply<BootstrapPlugin>()
 
 allprojects {
     group = "net.unethicalite"
 
-    project.extra["PluginProvider"] = "melxin"
+    project.extra["PluginProvider"] = "fred4106"
     project.extra["ProjectSupportUrl"] = ""
     project.extra["PluginLicense"] = "3-Clause BSD License"
 
     apply<JavaPlugin>()
+    apply<MavenPublishPlugin>()
+
     apply(plugin = "java-library")
     apply(plugin = "kotlin")
     apply(plugin = "checkstyle")
@@ -70,6 +72,11 @@ allprojects {
 
         compileKotlin {
             kotlinOptions.jvmTarget = "11"
+        }
+
+        register<Copy>("copyDeps") {
+            into("./build/deps/")
+            from(configurations["runtimeClasspath"])
         }
     }
 }
