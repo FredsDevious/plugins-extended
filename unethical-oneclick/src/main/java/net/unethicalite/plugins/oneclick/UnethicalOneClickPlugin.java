@@ -39,8 +39,7 @@ import java.util.Map;
 )
 @Slf4j
 @Extension
-public class UnethicalOneClickPlugin extends Plugin
-{
+public class UnethicalOneClickPlugin extends Plugin {
 	@Inject
 	private UnethicalOneClickConfig config;
 
@@ -62,16 +61,13 @@ public class UnethicalOneClickPlugin extends Plugin
 	private final Map<String, String> playerConfigs = new HashMap<>();
 
 	@Provides
-	public UnethicalOneClickConfig getConfig(ConfigManager configManager)
-	{
+	public UnethicalOneClickConfig getConfig(ConfigManager configManager) {
 		return configManager.getConfig(UnethicalOneClickConfig.class);
 	}
 
 	@Subscribe
-	public void onConfigChanged(ConfigChanged e)
-	{
-		if (!e.getGroup().equals("hootoneclick"))
-		{
+	public void onConfigChanged(ConfigChanged e) {
+		if (!e.getGroup().equals("hootoneclick")) {
 			return;
 		}
 
@@ -85,76 +81,62 @@ public class UnethicalOneClickPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onMenuEntryAdded(MenuEntryAdded e)
-	{
-		if (e.getOption().startsWith(ONECLICK_MENUOPTION_PREFIX))
-		{
+	public void onMenuEntryAdded(MenuEntryAdded e) {
+		if (e.getOption().startsWith(ONECLICK_MENUOPTION_PREFIX)) {
 			return;
 		}
 
 		int opcode = e.getType();
 
-		if (!gameObjectConfigs.isEmpty() && GAME_OBJECT_OPCODES.contains(opcode))
-		{
+		if (!gameObjectConfigs.isEmpty() && GAME_OBJECT_OPCODES.contains(opcode)) {
 			Tile tile = client.getScene().getTiles()[client.getPlane()][e.getActionParam0()][e.getActionParam1()];
 			TileObject obj = TileObjects.getFirstAt(tile, e.getIdentifier());
 			MenuEntry replaced = replace(gameObjectConfigs, obj);
-			if (replaced != null)
-			{
+			if (replaced != null) {
 				client.setMenuEntries(new MenuEntry[]{replaced});
 				return;
 			}
 		}
 
-		if (!npcConfigs.isEmpty() && NPC_OPCODES.contains(opcode))
-		{
+		if (!npcConfigs.isEmpty() && NPC_OPCODES.contains(opcode)) {
 			NPC npc = NPCs.getNearest(x -> x.getIndex() == e.getIdentifier());
 			MenuEntry replaced = replace(npcConfigs, npc);
-			if (replaced != null)
-			{
+			if (replaced != null) {
 				client.setMenuEntries(new MenuEntry[]{replaced});
 				return;
 			}
 		}
 
-		if (!groundItemConfigs.isEmpty() && GROUND_ITEM_OPCODES.contains(opcode))
-		{
+		if (!groundItemConfigs.isEmpty() && GROUND_ITEM_OPCODES.contains(opcode)) {
 			Tile tile = client.getScene().getTiles()[client.getPlane()][e.getActionParam0()][e.getActionParam1()];
 			TileItem item = TileItems.getFirstAt(tile, e.getIdentifier());
 			MenuEntry replaced = replace(groundItemConfigs, item);
-			if (replaced != null)
-			{
+			if (replaced != null) {
 				client.setMenuEntries(new MenuEntry[]{replaced});
 				return;
 			}
 		}
 
-		if (!itemConfigs.isEmpty() && ITEM_OPCODES.contains(opcode))
-		{
+		if (!itemConfigs.isEmpty() && ITEM_OPCODES.contains(opcode)) {
 			Item item = Inventory.getItem(e.getActionParam0());
 			MenuEntry replaced = replace(itemConfigs, item);
-			if (replaced != null)
-			{
+			if (replaced != null) {
 				client.setMenuEntries(new MenuEntry[]{replaced});
 				return;
 			}
 		}
 
-		if (!playerConfigs.isEmpty() && PLAYER_OPCODES.contains(opcode))
-		{
+		if (!playerConfigs.isEmpty() && PLAYER_OPCODES.contains(opcode)) {
 			Player player = Players.getNearest(x -> x.getIndex() == e.getIdentifier());
 			MenuEntry replaced = replace(playerConfigs, player);
-			if (replaced != null)
-			{
+			if (replaced != null) {
 				client.setMenuEntries(new MenuEntry[]{replaced});
 			}
 		}
 	}
 
-	private <T extends Interactable> MenuEntry replace(Map<String, String> replacements, T target)
-	{
-		if (!(target instanceof EntityNameable))
-		{
+	private <T extends Interactable> MenuEntry replace(Map<String, String> replacements, T target) {
+		if (!(target instanceof EntityNameable)) {
 			return null;
 		}
 
@@ -165,12 +147,9 @@ public class UnethicalOneClickPlugin extends Plugin
 		}
 
 		String replacement;
-		if (config.exactEntityNames())
-		{
+		if (config.exactEntityNames()) {
 			replacement = replacements.get(((EntityNameable) target).getName());
-		}
-		else
-		{
+		} else {
 			String key = replacements.keySet().stream()
 					.filter(x -> ((EntityNameable) target).getName().toLowerCase().contains(x.toLowerCase()))
 					.findFirst()
@@ -178,28 +157,21 @@ public class UnethicalOneClickPlugin extends Plugin
 			replacement = replacements.get(key);
 		}
 
-		if (replacement == null)
-		{
+		if (replacement == null) {
 			log.debug("Replacement was null for {}", target);
 			return null;
 		}
 
-		if (isUseOn(replacement))
-		{
+		if (isUseOn(replacement)) {
 			String itemName = replacement.substring(4);
-			if (isId(itemName))
-			{
+			if (isId(itemName)) {
 				Item usedItem = Inventory.getFirst(Integer.parseInt(itemName));
-				if (usedItem != null)
-				{
+				if (usedItem != null) {
 					return useOn(usedItem, target).setForceLeftClick(true);
 				}
-			}
-			else
-			{
+			} else {
 				Item usedItem = getUsedItem(replacement);
-				if (usedItem != null)
-				{
+				if (usedItem != null) {
 					return useOn(usedItem, target).setForceLeftClick(true);
 				}
 			}
@@ -208,8 +180,7 @@ public class UnethicalOneClickPlugin extends Plugin
 			return null;
 		}
 
-		if (!target.hasAction(replacement))
-		{
+		if (!target.hasAction(replacement)) {
 			return null;
 		}
 
@@ -219,34 +190,29 @@ public class UnethicalOneClickPlugin extends Plugin
 				.setForceLeftClick(true);
 	}
 
-	private MenuEntry useOn(Item item, Interactable target)
-	{
-		if (target instanceof TileItem)
-		{
+	private MenuEntry useOn(Item item, Interactable target) {
+		if (target instanceof TileItem) {
 			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_GROUND_ITEM.getId()).toEntry(client, 0)
 					.setOption(ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->")
 					.setTarget(((TileItem) target).getName())
 					.onClick(x -> item.use());
 		}
 
-		if (target instanceof TileObject)
-		{
+		if (target instanceof TileObject) {
 			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_GAME_OBJECT.getId()).toEntry(client, 0)
 					.setOption(ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->")
 					.setTarget(((TileObject) target).getName())
 					.onClick(x -> item.use());
 		}
 
-		if (target instanceof Item)
-		{
+		if (target instanceof Item) {
 			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_WIDGET.getId()).toEntry(client, 0)
 					.setOption(ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->")
 					.setTarget(((Item) target).getName())
 					.onClick(x -> item.use());
 		}
 
-		if (target instanceof Actor)
-		{
+		if (target instanceof Actor) {
 			MenuAction menuAction = target instanceof NPC ? MenuAction.WIDGET_TARGET_ON_NPC : MenuAction.WIDGET_TARGET_ON_PLAYER;
 			return target.getMenu(0, menuAction.getId()).toEntry(client, 0)
 					.setOption(ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->")
@@ -257,12 +223,10 @@ public class UnethicalOneClickPlugin extends Plugin
 		return null;
 	}
 
-	private Item getUsedItem(String action)
-	{
+	private Item getUsedItem(String action) {
 		return Inventory.getFirst(x ->
 		{
-			if (config.exactItemNames())
-			{
+			if (config.exactItemNames()) {
 				return x.getName().equals(action.substring(4));
 			}
 
@@ -270,25 +234,20 @@ public class UnethicalOneClickPlugin extends Plugin
 		});
 	}
 
-	private boolean isUseOn(String action)
-	{
+	private boolean isUseOn(String action) {
 		return action.contains("Use ") && action.split(" ").length >= 2;
 	}
 
-	private void parseConfigs(String text, Map<String, String> configs)
-	{
-		if (text.isBlank())
-		{
+	private void parseConfigs(String text, Map<String, String> configs) {
+		if (text.isBlank()) {
 			return;
 		}
 
 		String[] items = text.split(",");
 
-		for (String i : items)
-		{
+		for (String i : items) {
 			String[] pairs = i.split(":");
-			if (pairs.length < 2)
-			{
+			if (pairs.length < 2) {
 				continue;
 			}
 
@@ -296,18 +255,15 @@ public class UnethicalOneClickPlugin extends Plugin
 		}
 	}
 
-	private boolean isConfigured(String entityName, Map<String, String> configs)
-	{
-		if (config.exactEntityNames())
-		{
+	private boolean isConfigured(String entityName, Map<String, String> configs) {
+		if (config.exactEntityNames()) {
 			return configs.containsKey(entityName);
 		}
 
 		return configs.keySet().stream().anyMatch(x -> entityName.toLowerCase().contains(x.toLowerCase()));
 	}
 
-	private void clearConfigs()
-	{
+	private void clearConfigs() {
 		gameObjectConfigs.clear();
 		npcConfigs.clear();
 		groundItemConfigs.clear();
@@ -315,18 +271,13 @@ public class UnethicalOneClickPlugin extends Plugin
 		playerConfigs.clear();
 	}
 
-	private boolean isId(String text)
-	{
-		if (text == null)
-		{
+	private boolean isId(String text) {
+		if (text == null) {
 			return false;
 		}
-		try
-		{
+		try {
 			Integer.parseInt(text);
-		}
-		catch (NumberFormatException nfe)
-		{
+		} catch (NumberFormatException nfe) {
 			return false;
 		}
 

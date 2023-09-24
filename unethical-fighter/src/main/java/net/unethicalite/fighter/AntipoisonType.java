@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum AntipoisonType
-{
+public enum AntipoisonType {
 	ANTIPOISON(179, 177, 175, 2446),
 	SUPER_ANTIPOISON(185, 183, 181, 2448),
 	ANTIDOTE_PLUS(5949, 5947, 5945, 5943),

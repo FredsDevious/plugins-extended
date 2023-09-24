@@ -6,8 +6,7 @@ import net.unethicalite.api.plugins.Task;
 import net.unethicalite.plugins.cooker.CookerPlugin;
 
 @RequiredArgsConstructor
-public abstract class CookerTask implements Task
-{
+public abstract class CookerTask implements Task {
 	@Delegate
 	private final CookerPlugin context;
 

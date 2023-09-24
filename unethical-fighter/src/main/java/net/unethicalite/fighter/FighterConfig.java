@@ -7,8 +7,7 @@ import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Range;
 
 @ConfigGroup("hootfighter")
-public interface FighterConfig extends Config
-{
+public interface FighterConfig extends Config {
 	@ConfigSection(
 			name = "General",
 			description = "General settings",
@@ -88,8 +87,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = general
 	)
-	default String monster()
-	{
+	default String monster() {
 		return "Chicken";
 	}
 
@@ -101,8 +99,7 @@ public interface FighterConfig extends Config
 			position = 1,
 			section = general
 	)
-	default int attackRange()
-	{
+	default int attackRange() {
 		return 10;
 	}
 
@@ -113,8 +110,7 @@ public interface FighterConfig extends Config
 			position = 2,
 			section = general
 	)
-	default String centerTile()
-	{
+	default String centerTile() {
 		return "0 0 0";
 	}
 
@@ -125,8 +121,7 @@ public interface FighterConfig extends Config
 			position = 3,
 			section = general
 	)
-	default boolean buryBones()
-	{
+	default boolean buryBones() {
 		return true;
 	}
 
@@ -137,8 +132,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = loot
 	)
-	default String loots()
-	{
+	default String loots() {
 		return "Bones";
 	}
 
@@ -149,8 +143,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = loot
 	)
-	default String dontLoot()
-	{
+	default String dontLoot() {
 		return "Bones";
 	}
 
@@ -161,8 +154,7 @@ public interface FighterConfig extends Config
 			position = 1,
 			section = loot
 	)
-	default boolean lootByValue()
-	{
+	default boolean lootByValue() {
 		return true;
 	}
 
@@ -175,8 +167,7 @@ public interface FighterConfig extends Config
 			hidden = true,
 			unhide = "lootByValue"
 	)
-	default int lootValue()
-	{
+	default int lootValue() {
 		return 0;
 	}
 
@@ -187,8 +178,7 @@ public interface FighterConfig extends Config
 			position = 2,
 			section = loot
 	)
-	default boolean untradables()
-	{
+	default boolean untradables() {
 		return true;
 	}
 
@@ -199,8 +189,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = health
 	)
-	default boolean eat()
-	{
+	default boolean eat() {
 		return true;
 	}
 
@@ -212,8 +201,7 @@ public interface FighterConfig extends Config
 			position = 1,
 			section = health
 	)
-	default int healthPercent()
-	{
+	default int healthPercent() {
 		return 65;
 	}
 
@@ -224,8 +212,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = health
 	)
-	default String foods()
-	{
+	default String foods() {
 		return "Any";
 	}
 
@@ -236,8 +223,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = prayers
 	)
-	default boolean quickPrayer()
-	{
+	default boolean quickPrayer() {
 		return false;
 	}
 
@@ -248,8 +234,7 @@ public interface FighterConfig extends Config
 			position = 1,
 			section = prayers
 	)
-	default boolean flick()
-	{
+	default boolean flick() {
 		return false;
 	}
 
@@ -260,8 +245,7 @@ public interface FighterConfig extends Config
 			position = 2,
 			section = prayers
 	)
-	default boolean restore()
-	{
+	default boolean restore() {
 		return false;
 	}
 
@@ -272,8 +256,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = alching
 	)
-	default boolean alching()
-	{
+	default boolean alching() {
 		return false;
 	}
 
@@ -284,8 +267,7 @@ public interface FighterConfig extends Config
 			position = 1,
 			section = alching
 	)
-	default AlchSpell alchSpell()
-	{
+	default AlchSpell alchSpell() {
 		return AlchSpell.HIGH;
 	}
 
@@ -296,8 +278,7 @@ public interface FighterConfig extends Config
 			position = 2,
 			section = alching
 	)
-	default String alchItems()
-	{
+	default String alchItems() {
 		return "Weed";
 	}
 
@@ -308,8 +289,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = antipoison
 	)
-	default boolean antipoison()
-	{
+	default boolean antipoison() {
 		return false;
 	}
 
@@ -320,8 +300,7 @@ public interface FighterConfig extends Config
 			position = 1,
 			section = antipoison
 	)
-	default AntipoisonType antipoisonType()
-	{
+	default AntipoisonType antipoisonType() {
 		return AntipoisonType.ANTIPOISON;
 	}
 
@@ -332,11 +311,10 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = slayer
 	)
-	default boolean disableAfterSlayerTask()
-	{
+	default boolean disableAfterSlayerTask() {
 		return false;
 	}
-	
+
 	@ConfigItem(
 			keyName = "antifire",
 			name = "Use antifire",
@@ -344,8 +322,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = antifire
 	)
-	default boolean antifire()
-	{
+	default boolean antifire() {
 		return false;
 	}
 
@@ -356,8 +333,7 @@ public interface FighterConfig extends Config
 			position = 1,
 			section = antifire
 	)
-	default AntifireType antifireType()
-	{
+	default AntifireType antifireType() {
 		return AntifireType.ANTIFIRE;
 	}
 
@@ -368,8 +344,7 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = debug
 	)
-	default boolean drawRadius()
-	{
+	default boolean drawRadius() {
 		return false;
 	}
 
@@ -380,8 +355,7 @@ public interface FighterConfig extends Config
 			position = 1,
 			section = debug
 	)
-	default boolean drawCenter()
-	{
+	default boolean drawCenter() {
 		return false;
 	}
 }

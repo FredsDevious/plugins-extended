@@ -6,8 +6,7 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 
 @ConfigGroup("hootoneclick")
-public interface UnethicalOneClickConfig extends Config
-{
+public interface UnethicalOneClickConfig extends Config {
 	@ConfigSection(
 			name = "Game Objects",
 			description = "Replace Game Object interactions",
@@ -23,8 +22,7 @@ public interface UnethicalOneClickConfig extends Config
 			section = gameObjs,
 			position = 0
 	)
-	default String gameObjectConfig()
-	{
+	default String gameObjectConfig() {
 		return "";
 	}
 
@@ -43,8 +41,7 @@ public interface UnethicalOneClickConfig extends Config
 			section = npcs,
 			position = 0
 	)
-	default String npcConfig()
-	{
+	default String npcConfig() {
 		return "";
 	}
 
@@ -63,8 +60,7 @@ public interface UnethicalOneClickConfig extends Config
 			section = groundItems,
 			position = 0
 	)
-	default String groundItemConfig()
-	{
+	default String groundItemConfig() {
 		return "";
 	}
 
@@ -83,8 +79,7 @@ public interface UnethicalOneClickConfig extends Config
 			section = items,
 			position = 0
 	)
-	default String itemConfig()
-	{
+	default String itemConfig() {
 		return "";
 	}
 
@@ -103,8 +98,7 @@ public interface UnethicalOneClickConfig extends Config
 			section = players,
 			position = 0
 	)
-	default String playerConfig()
-	{
+	default String playerConfig() {
 		return "";
 	}
 
@@ -114,8 +108,7 @@ public interface UnethicalOneClickConfig extends Config
 			description = "Check for exact entity names",
 			position = 5
 	)
-	default boolean exactEntityNames()
-	{
+	default boolean exactEntityNames() {
 		return true;
 	}
 
@@ -125,8 +118,7 @@ public interface UnethicalOneClickConfig extends Config
 			description = "Check for exact item names for items to use",
 			position = 6
 	)
-	default boolean exactItemNames()
-	{
+	default boolean exactItemNames() {
 		return true;
 	}
 }

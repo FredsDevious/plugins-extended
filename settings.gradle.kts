@@ -58,6 +58,8 @@ include("unethical-cooker")
 
 //include("example-kotlin")
 
+include("unethical-guardians-of-the-rift")
+
 for (project in rootProject.children) {
     project.apply {
         projectDir = file(name)

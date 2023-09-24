@@ -50,8 +50,7 @@ import java.util.stream.Collectors;
 )
 @Slf4j
 @Extension
-public class FighterPlugin extends LoopedPlugin
-{
+public class FighterPlugin extends LoopedPlugin {
 	private static final Pattern WORLD_POINT_PATTERN = Pattern.compile("^\\d{4,5} \\d{4,5} \\d$");
 
 	private ScheduledExecutorService executor;
@@ -77,120 +76,97 @@ public class FighterPlugin extends LoopedPlugin
 	private final List<TileItem> notOurItems = new ArrayList<>();
 
 	@Override
-	public void startUp() throws Exception
-	{
+	public void startUp() throws Exception {
 		super.startUp();
 		overlayManager.add(fighterOverlay);
 		executor = Executors.newSingleThreadScheduledExecutor();
 		executor.scheduleWithFixedDelay(() ->
 		{
-			try
-			{
-				if (!Game.isLoggedIn())
-				{
+			try {
+				if (!Game.isLoggedIn()) {
 					return;
 				}
 
-				if (config.quickPrayer() && !Prayers.isQuickPrayerEnabled())
-				{
+				if (config.quickPrayer() && !Prayers.isQuickPrayerEnabled()) {
 					Prayers.toggleQuickPrayer(true);
 				}
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}, 0, 100, TimeUnit.MILLISECONDS);
 
-		if (Game.isLoggedIn())
-		{
+		if (Game.isLoggedIn()) {
 			setCenter(Players.getLocal().getWorldLocation());
 		}
 	}
 
 	@Provides
-	public FighterConfig getConfig(ConfigManager configManager)
-	{
+	public FighterConfig getConfig(ConfigManager configManager) {
 		return configManager.getConfig(FighterConfig.class);
 	}
 
 	@Override
-	public void shutDown()
-	{
+	public void shutDown() {
 		overlayManager.remove(fighterOverlay);
-		if (executor != null)
-		{
+		if (executor != null) {
 			executor.shutdown();
 		}
 	}
 
 	@Override
-	protected int loop()
-	{
+	protected int loop() {
 		WorldPoint center = getCenter();
-		if (center == null)
-		{
-			if (Game.isLoggedIn())
-			{
+		if (center == null) {
+			if (Game.isLoggedIn()) {
 				setCenter(Players.getLocal().getWorldLocation());
 			}
 
 			return -1;
 		}
 
-		if (Movement.isWalking())
-		{
+		if (Movement.isWalking()) {
 			return -4;
 		}
 
-		if (config.flick() && Prayers.isQuickPrayerEnabled())
-		{
+		if (config.flick() && Prayers.isQuickPrayerEnabled()) {
 			Prayers.toggleQuickPrayer(false);
 		}
 
-		if (config.eat() && Combat.getHealthPercent() <= config.healthPercent())
-		{
+		if (config.eat() && Combat.getHealthPercent() <= config.healthPercent()) {
 			List<String> foods = Text.fromCSV(config.foods());
 			Item food = Inventory.getFirst(x -> (x.getName() != null && foods.stream().anyMatch(a -> x.getName().contains(a)))
 					|| (foods.contains("Any") && x.hasAction("Eat")));
-			if (food != null)
-			{
+			if (food != null) {
 				food.interact("Eat");
 				return -3;
 			}
 		}
 
-		if (config.restore() && Prayers.getPoints() < 5)
-		{
+		if (config.restore() && Prayers.getPoints() < 5) {
 			Item restorePotion = Inventory.getFirst(x -> x.hasAction("Drink")
 					&& (x.getName().contains("Prayer potion") || x.getName().contains("Super restore")));
-			if (restorePotion != null)
-			{
+			if (restorePotion != null) {
 				restorePotion.interact("Drink");
 				return -3;
 			}
 		}
 
-		if (config.antipoison() && Combat.isPoisoned())
-		{
+		if (config.antipoison() && Combat.isPoisoned()) {
 			Item antipoison = Inventory.getFirst(
 					config.antipoisonType().getDose1(),
 					config.antipoisonType().getDose2(),
 					config.antipoisonType().getDose3(),
 					config.antipoisonType().getDose4()
 			);
-			if (antipoison != null)
-			{
+			if (antipoison != null) {
 				antipoison.interact("Drink");
 				return -1;
 			}
 		}
 
-		if (config.buryBones())
-		{
+		if (config.buryBones()) {
 			Item bones = Inventory.getFirst(x -> x.hasAction("Bury") || x.hasAction("Scatter"));
-			if (bones != null)
-			{
+			if (bones != null) {
 				bones.interact(bones.hasAction("Bury") ? "Bury" : "Scatter");
 				return -1;
 			}
@@ -201,10 +177,8 @@ public class FighterPlugin extends LoopedPlugin
 				!notOurItems.contains(x)
 						&& !shouldNotLoot(x) && (shouldLootByName(x) || shouldLootUntradable(x) || shouldLootByValue(x))
 		);
-		if (loot != null && canPick(loot))
-		{
-			if (!Reachable.isInteractable(loot.getTile()))
-			{
+		if (loot != null && canPick(loot)) {
+			if (!Reachable.isInteractable(loot.getTile())) {
 				Movement.walkTo(loot.getTile().getWorldLocation());
 				return -4;
 			}
@@ -213,36 +187,30 @@ public class FighterPlugin extends LoopedPlugin
 			return -3;
 		}
 
-		if (config.alching())
-		{
+		if (config.alching()) {
 			AlchSpell alchSpell = config.alchSpell();
-			if (alchSpell.canCast())
-			{
+			if (alchSpell.canCast()) {
 				List<String> alchItems = Text.fromCSV(config.alchItems());
 				Item alchItem = Inventory.getFirst(x -> x.getName() != null && textMatches(alchItems, x.getName()));
-				if (alchItem != null)
-				{
+				if (alchItem != null) {
 					Magic.cast(alchSpell.getSpell(), alchItem);
 					return -1;
 				}
 			}
 		}
 
-		if (local.getInteracting() != null && !Dialog.canContinue())
-		{
+		if (local.getInteracting() != null && !Dialog.canContinue()) {
 			return -1;
 		}
 
-		if (config.antifire() && (!Combat.isAntifired() && !Combat.isSuperAntifired()))
-		{
+		if (config.antifire() && (!Combat.isAntifired() && !Combat.isSuperAntifired())) {
 			Item antifire = Inventory.getFirst(
 					config.antifireType().getDose1(),
 					config.antifireType().getDose2(),
 					config.antifireType().getDose3(),
 					config.antifireType().getDose4()
 			);
-			if (antifire != null)
-			{
+			if (antifire != null) {
 				antifire.interact("Drink");
 				return -1;
 			}
@@ -253,10 +221,8 @@ public class FighterPlugin extends LoopedPlugin
 				&& textMatches(mobs, x.getName()) && !x.isDead()
 				&& x.getWorldLocation().distanceTo(center) < config.attackRange()
 		);
-		if (mob == null)
-		{
-			if (local.getWorldLocation().distanceTo(center) < 3)
-			{
+		if (mob == null) {
+			if (local.getWorldLocation().distanceTo(center) < 3) {
 				MessageUtils.addMessage("No attackable monsters in area");
 				return -1;
 			}
@@ -265,8 +231,7 @@ public class FighterPlugin extends LoopedPlugin
 			return -4;
 		}
 
-		if (!Reachable.isInteractable(mob))
-		{
+		if (!Reachable.isInteractable(mob)) {
 			Movement.walkTo(mob.getWorldLocation());
 			return -4;
 		}
@@ -276,52 +241,42 @@ public class FighterPlugin extends LoopedPlugin
 	}
 
 	@Subscribe
-	public void onChatMessage(ChatMessage e)
-	{
+	public void onChatMessage(ChatMessage e) {
 		String message = e.getMessage();
-		if (message.contains("other players have dropped"))
-		{
+		if (message.contains("other players have dropped")) {
 			var notOurs = TileItems.getAt(Players.getLocal().getWorldLocation(), x -> true);
 			log.debug("{} are not our items", notOurs.stream().map(TileItem::getName).collect(Collectors.toList()));
 			notOurItems.addAll(notOurs);
-		}
-		else if (config.disableAfterSlayerTask() && message.contains("You have completed your task!"))
-		{
+		} else if (config.disableAfterSlayerTask() && message.contains("You have completed your task!")) {
 			SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
 		}
 	}
 
-	private boolean shouldNotLoot(TileItem item)
-	{
+	private boolean shouldNotLoot(TileItem item) {
 		return textMatches(Text.fromCSV(config.dontLoot()), item.getName());
 	}
 
-	private boolean shouldLootUntradable(TileItem item)
-	{
+	private boolean shouldLootUntradable(TileItem item) {
 		return config.untradables()
 				&& (!item.isTradable() || item.hasInventoryAction("Destroy"))
 				&& item.getId() != ItemID.COINS_995;
 	}
 
-	private boolean shouldLootByValue(TileItem item)
-	{
+	private boolean shouldLootByValue(TileItem item) {
 		return config.lootByValue()
 				&& config.lootValue() > 0
 				&& itemManager.getItemPrice(item.getId()) * item.getQuantity() > config.lootValue();
 	}
 
-	private boolean shouldLootByName(TileItem item)
-	{
+	private boolean shouldLootByName(TileItem item) {
 		return textMatches(Text.fromCSV(config.loots()), item.getName());
 	}
 
-	private boolean textMatches(List<String> itemNames, String itemName)
-	{
+	private boolean textMatches(List<String> itemNames, String itemName) {
 		return itemNames.stream().anyMatch(name -> WildcardMatcher.matches(name, itemName));
 	}
 
-	private void setCenter(WorldPoint worldPoint)
-	{
+	private void setCenter(WorldPoint worldPoint) {
 		configManager.setConfiguration(
 				"hootfighter",
 				"centerTile",
@@ -329,11 +284,9 @@ public class FighterPlugin extends LoopedPlugin
 		);
 	}
 
-	protected WorldPoint getCenter()
-	{
+	protected WorldPoint getCenter() {
 		String textValue = config.centerTile();
-		if (textValue.isBlank() || !WORLD_POINT_PATTERN.matcher(textValue).matches())
-		{
+		if (textValue.isBlank() || !WORLD_POINT_PATTERN.matcher(textValue).matches()) {
 			return null;
 		}
 
@@ -344,8 +297,7 @@ public class FighterPlugin extends LoopedPlugin
 		return new WorldPoint(split.get(0), split.get(1), split.get(2));
 	}
 
-	protected boolean canPick(TileItem tileItem)
-	{
+	protected boolean canPick(TileItem tileItem) {
 		return tileItem != null && tileItem.distanceTo(client.getLocalPlayer().getWorldLocation()) <= 5 && !Inventory.isFull();
 	}
 }

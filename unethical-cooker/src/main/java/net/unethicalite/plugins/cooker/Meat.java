@@ -4,8 +4,7 @@ import lombok.Getter;
 import net.runelite.api.ItemID;
 
 @Getter
-public enum Meat
-{
+public enum Meat {
 	MEAT(ItemID.RAW_BEEF, ItemID.COOKED_MEAT, 4),
 	SHRIMPS(ItemID.RAW_SHRIMPS, ItemID.SHRIMPS, 4),
 	CHICKEN(ItemID.RAW_CHICKEN, ItemID.COOKED_CHICKEN, 4),
@@ -37,16 +36,14 @@ public enum Meat
 	private final int cookTicks;
 	private final int productionIndex;
 
-	Meat(int rawId, int cookedId, int cookTicks, int productionIndex)
-	{
+	Meat(int rawId, int cookedId, int cookTicks, int productionIndex) {
 		this.rawId = rawId;
 		this.cookedId = cookedId;
 		this.cookTicks = cookTicks;
 		this.productionIndex = productionIndex;
 	}
 
-	Meat(int rawId, int cookedId, int cookTicks)
-	{
+	Meat(int rawId, int cookedId, int cookTicks) {
 		this(rawId, cookedId, cookTicks, 0);
 	}
 }

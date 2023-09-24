@@ -16,8 +16,7 @@ import org.pf4j.Extension;
 		name = "Unethical Cooker",
 		enabledByDefault = false
 )
-public class CookerPlugin extends TaskPlugin
-{
+public class CookerPlugin extends TaskPlugin {
 	private final Task[] tasks =
 			{
 					new Cook(this)
@@ -32,14 +31,12 @@ public class CookerPlugin extends TaskPlugin
 	private Client client;
 
 	@Override
-	public Task[] getTasks()
-	{
+	public Task[] getTasks() {
 		return tasks;
 	}
 
 	@Provides
-	CookerConfig provideConfig(ConfigManager configManager)
-	{
+	CookerConfig provideConfig(ConfigManager configManager) {
 		return configManager.getConfig(CookerConfig.class);
 	}
 }

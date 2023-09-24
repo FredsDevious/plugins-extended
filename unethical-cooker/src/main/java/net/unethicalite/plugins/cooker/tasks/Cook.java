@@ -20,33 +20,26 @@ import net.unethicalite.plugins.cooker.Meat;
 
 import java.util.function.Predicate;
 
-public class Cook extends CookerTask
-{
-	public Cook(CookerPlugin context)
-	{
+public class Cook extends CookerTask {
+	public Cook(CookerPlugin context) {
 		super(context);
 	}
 
 	@Override
-	public boolean validate()
-	{
+	public boolean validate() {
 		return true;
 	}
 
 	@Override
-	public int execute()
-	{
+	public int execute() {
 		Meat meat = getConfig().item();
 		Item raw = Inventory.getFirst(meat.getRawId());
 		Player local = Players.getLocal();
 
-		if (raw == null)
-		{
-			if (Bank.isOpen())
-			{
+		if (raw == null) {
+			if (Bank.isOpen()) {
 				Predicate<Item> rawPredicate = x -> x.getId() == meat.getRawId();
-				if (Inventory.contains(rawPredicate.negate()))
-				{
+				if (Inventory.contains(rawPredicate.negate())) {
 					Bank.depositInventory();
 					return -2;
 				}
@@ -56,15 +49,13 @@ public class Cook extends CookerTask
 			}
 
 			NPC banker = NPCs.getNearest(npc -> npc.hasAction("Collect"));
-			if (banker != null)
-			{
+			if (banker != null) {
 				banker.interact("Bank");
 				return -3;
 			}
 
 			TileObject bank = TileObjects.getFirstSurrounding(local.getWorldLocation(), 10, obj -> obj.hasAction("Collect") || obj.getName().startsWith("Bank"));
-			if (bank != null)
-			{
+			if (bank != null) {
 				bank.interact("Bank", "Use");
 				return -3;
 			}
@@ -73,14 +64,12 @@ public class Cook extends CookerTask
 			return -1;
 		}
 
-		if (local.getAnimation() == AnimationID.COOKING_RANGE || local.getAnimation() == AnimationID.COOKING_FIRE)
-		{
+		if (local.getAnimation() == AnimationID.COOKING_RANGE || local.getAnimation() == AnimationID.COOKING_FIRE) {
 			taskCooldown = getClient().getTickCount() + meat.getCookTicks();
 			return -1;
 		}
 
-		if (getClient().getTickCount() < taskCooldown)
-		{
+		if (getClient().getTickCount() < taskCooldown) {
 			return -1;
 		}
 
@@ -89,15 +78,13 @@ public class Cook extends CookerTask
 				10,
 				x -> x.hasAction("Cook")
 		);
-		if (cookingObject == null)
-		{
+		if (cookingObject == null) {
 			MessageUtils.addMessage("Fire/cooking range not found.", ChatColorType.HIGHLIGHT);
 			return -1;
 		}
 
 
-		if (Production.isOpen())
-		{
+		if (Production.isOpen()) {
 			Widgets.get(WidgetID.MULTISKILL_MENU_GROUP_ID, 14 + meat.getProductionIndex()).interact(0);
 			return -meat.getCookTicks();
 		}
@@ -107,8 +94,7 @@ public class Cook extends CookerTask
 	}
 
 	@Override
-	public boolean subscribe()
-	{
+	public boolean subscribe() {
 		return true;
 	}
 }
